@@ -25,7 +25,7 @@ psql -d YOUR_DATABASE -f create_tables.sql
 psql -d YOUR_DATABASE -f load_data.sql
 ```
 
-`load_data.sql` uses psql `\copy`, so run it from the bundle root so paths such as `csv/orders.csv` resolve correctly.
+`database/load_data.sql` uses psql `\copy`, so run it from the bundle root so paths such as `data/raw/orders.csv` resolve correctly.
 
 ## Modeling choices
 

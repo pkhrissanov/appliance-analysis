@@ -7,7 +7,7 @@ analytical metrics such as gross margin, return rate, inventory turnover, or
 salesperson rankings are left for downstream SQL/BI.
 
 Default history: 2023-08-01 through 2026-07-31 (36 months)
-Default seed:    20260816
+Default seed:    42
 
 Dependencies: Python 3.10+ and numpy.
 """
@@ -30,7 +30,7 @@ from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy as np
 
-SEED = 20260816
+SEED = 42
 DEFAULT_START = date(2023, 8, 1)
 DEFAULT_END = date(2026, 7, 31)
 
