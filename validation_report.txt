@@ -1,0 +1,48 @@
+Synthetic appliance-retail dataset validation report
+====================================================
+
+Seed: 20260816
+History: 2023-08-01 through 2026-07-31
+
+stores                                   12
+employee_roles                            5
+employees                               218
+employee_compensation_history           936
+employee_shifts                     130,813
+customers                            50,000
+brands                                   11
+categories                               26
+products                              1,000
+product_prices                        4,858
+orders                               71,464
+order_items                         120,096
+payments                             80,112
+return_reasons                            8
+returns                               3,143
+return_items                          3,284
+protection_plans                          8
+order_protection_plans               25,049
+warehouses                                2
+suppliers                                11
+purchase_orders                       3,262
+purchase_order_items                 24,579
+inventory_transactions              396,118
+inventory_snapshots                 368,082
+promotions                               88
+order_item_promotions                34,639
+date_dimension                        1,096
+
+Checks:
+- Simulation minimum final store inventory: 0
+- Simulation minimum final warehouse inventory: 0
+- Order monetary identity subtotal - discount_total + tax_total = total_amount: PASS
+- In-store/phone salesperson orders fall inside a recorded employee shift: PASS
+- Inventory snapshots nonnegative and reserved <= on-hand: PASS
+- Primary identifier uniqueness checks: PASS
+- Order subtotal equals sum of frozen regular line values plus sold protection plans: PASS
+- Order discount_total equals sum of order-item discounts: PASS
+- Payment transaction totals reconcile to order total_amount by order status: PASS
+- Fulfilled order-item quantities reconcile exactly to SALE inventory movements: PASS
+- Returned quantities never exceed original order-item quantities: PASS
+- Completed return refund headers reconcile to completed REFUND payments: PASS
+- Final inventory snapshot (2026-07-31) reconciles exactly to cumulative signed inventory transactions: PASS

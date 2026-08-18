@@ -1,0 +1,42 @@
+{
+  "seed": 20260816,
+  "history_start": "2023-08-01",
+  "history_end": "2026-07-31",
+  "history_days": 1096,
+  "row_counts": {
+    "stores": 12,
+    "employee_roles": 5,
+    "employees": 218,
+    "employee_compensation_history": 936,
+    "employee_shifts": 130813,
+    "customers": 50000,
+    "brands": 11,
+    "categories": 26,
+    "products": 1000,
+    "product_prices": 4858,
+    "orders": 71464,
+    "order_items": 120096,
+    "payments": 80112,
+    "return_reasons": 8,
+    "returns": 3143,
+    "return_items": 3284,
+    "protection_plans": 8,
+    "order_protection_plans": 25049,
+    "warehouses": 2,
+    "suppliers": 11,
+    "purchase_orders": 3262,
+    "purchase_order_items": 24579,
+    "inventory_transactions": 396118,
+    "inventory_snapshots": 368082,
+    "promotions": 88,
+    "order_item_promotions": 34639,
+    "date_dimension": 1096
+  },
+  "notes": [
+    "Operational values only; downstream analytical metrics are intentionally not materialized.",
+    "Order-item regular price, sold price, and unit cost are frozen transaction-time facts.",
+    "Inventory movements use signed quantity_change and reconcile through receipts, sales, returns, transfers, and damage.",
+    "Inventory snapshots are month-end and include carried store SKUs plus launched warehouse SKUs.",
+    "Promotions affect demand and discounting; employee/store hidden tendencies are generator-only and never written to the database."
+  ]
+}
