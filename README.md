@@ -1,439 +1,343 @@
 # Appliance Retail Analytics
 
-An end-to-end retail analytics portfolio project built around a fictional multi-store Canadian appliance retailer. The project combines **Python**, **PostgreSQL**, **Azure**, **SQL**, and **Power BI** to move from synthetic operational data to executive-level business reporting.
-
-> **Note:** All data in this project is synthetic and was generated specifically for analysis and portfolio use. It does not represent a real retailer or real customers.
-
-## Executive Dashboard
-
-![Executive Performance Overview](exec-screenshot.png)
-
-**Current status:** Executive Overview complete; Store Detail page is the next planned report page.
-
-The current Power BI Executive Performance Overview is designed to answer four questions:
-
-1. **How is the company performing?**
-2. **Which stores are performing best or worst?**
-3. **How is store health changing over time?**
-4. **What is driving changes in gross profit?**
-
-### Current Executive Overview
-
-The dashboard currently includes:
-
-- **Total Profit** with previous-period comparison
-- **Total Revenue** with previous-period comparison
-- **Store Health** with previous-period comparison
-- **Gross Margin** with previous-period comparison
-- **Store Ranking** with selectable performance metrics
-- **Store Health Trend** compared with the company average and target threshold
-- **Store Growth vs. Margin** scatterplot for identifying high-growth, low-margin, and underperforming locations
-- **Gross Profit Change Drivers** showing the contribution of sales value, product cost, discounts, returns/refunds, and recovered product cost relative to the previous quarter
-- Year, quarter, and store-level filtering
-
-## Project Goal
-
-The goal of this project is to demonstrate a complete analytics workflow rather than only a standalone dashboard.
-
-The project covers:
-
-- Relational data modeling
-- Reproducible synthetic data generation
-- Data quality validation
-- Cloud PostgreSQL deployment
-- Automated bulk data loading
-- SQL analytics and reusable reporting views
-- DAX measures and time-intelligence calculations
-- Executive dashboard design
-- Business-oriented KPI and driver analysis
-- Git-based source control and documentation
-
-## Architecture
-
-```text
-Python Synthetic Data Generator
-            |
-            v
-     Generated CSV Data
-            |
-            v
-Azure Database for PostgreSQL
-     Flexible Server
-            |
-            v
-Normalized Operational Tables
-            |
-            v
-   PostgreSQL Analytics Layer
-            |
-            v
-       Power BI Model
-            |
-            v
-Executive / Store Reporting
-```
-
-The operational database and analytical reporting logic are intentionally separated. PostgreSQL handles reusable transformations and row-level business logic, while Power BI/DAX handles calculations that depend on report filter context and interactive time periods.
-
-## Technology Stack
-
-| Area | Technology |
-| --- | --- |
-| Data generation | Python, NumPy |
-| Database | PostgreSQL |
-| Cloud hosting | Azure Database for PostgreSQL Flexible Server |
-| Database connectivity | psycopg |
-| Configuration | python-dotenv |
-| SQL development | JetBrains DataGrip |
-| Analytics | SQL, DAX |
-| Visualization | Microsoft Power BI |
-| Environment management | Miniconda |
-| Version control | Git / GitHub |
-
-## Synthetic Dataset
-
-The project uses a reproducible synthetic operational dataset designed to behave more like a real retail business than a collection of independently randomized tables.
-
-- **Random seed:** `20260816`
-- **History:** `2023-08-01` through `2026-07-31`
-- **Stores:** 12
-- **Employees:** 218
-- **Customers:** 50,000
-- **Products:** 1,000
-- **Orders:** 71,464
-- **Order items:** 120,096
-- **Returns:** 3,143
-- **Inventory transactions:** 396,118
-- **Inventory snapshots:** 368,082
+An end-to-end retail analytics project built around a fictional multi-store Canadian appliance retailer.
 
-### Realistic Business Behaviour
+The project combines **Python, PostgreSQL, Azure, SQL, DAX, and Power BI** to transform operational retail data into interactive business reporting focused on store performance, profitability, inventory, and sales operations.
 
-The generator includes correlated behaviour across stores, employees, products, inventory, promotions, and customers.
+> **Note:** All data used in this project is synthetic and was created specifically for portfolio and analytical purposes. It does not represent a real retailer or real customers.
 
-Examples include:
+---
 
-- Store-specific traffic and customer mix
-- Weekday/weekend and seasonal demand patterns
-- Employee productivity differences
-- Employee discounting and premium-product tendencies
-- Product/category seasonality
-- Inventory-aware SKU selection
-- Promotions and discretionary discounts
-- Returns linked to original order items
-- Historical transaction-time prices and product costs
-- Sales linked to employee shift availability
-- Purchase orders, receipts, transfers, and inventory movements
-- Protection-plan attachment behaviour
+## Current Project Status
 
-This allows the downstream analytics to surface meaningful differences between stores, products, employees, and time periods instead of producing completely random KPI movement.
+The primary focus of the project is now the **Power BI reporting layer**.
 
-## Operational Data Model
+The **Store Overview dashboard is the current showcase page**, providing a detailed view of an individual store's financial and operational performance.
 
-The PostgreSQL database contains **27 normalized operational tables**.
+The original **Executive Overview** is currently being redesigned to better complement the Store Overview. The final report will combine both perspectives:
 
-### Stores and Employees
+- **Executive Overview** — company-wide performance and comparison across stores
+- **Store Overview** — detailed investigation of an individual location
 
-- `stores`
-- `employee_roles`
-- `employees`
-- `employee_compensation_history`
-- `employee_shifts`
+The Store Overview is currently the most complete representation of the intended final report design. Once the Executive Overview redesign is complete, the two pages will be presented together as the main showcase of the project.
 
-### Customers and Products
+---
 
-- `customers`
-- `brands`
-- `categories`
-- `products`
-- `product_prices`
+# Store Overview
 
-### Sales and Payments
+The Store Overview is designed around a simple management question:
 
-- `orders`
-- `order_items`
-- `payments`
+**What is happening at this store, and where should management investigate further?**
 
-### Returns
+It brings financial performance, operational metrics, inventory, product categories, and employee performance together on a single interactive page.
 
-- `return_reasons`
-- `returns`
-- `return_items`
+## Monthly Store View
 
-### Protection Plans and Promotions
+![Store Overview - Calgary North Outlet - Monthly View](./Screenshot%202026-08-23%20230722.png)
 
-- `protection_plans`
-- `order_protection_plans`
-- `promotions`
-- `order_item_promotions`
+The dashboard begins with five key store-level KPIs:
 
-### Inventory and Purchasing
+- **Revenue**
+- **Gross Profit**
+- **Average Order Value**
+- **Gross Margin %**
+- **Store Health Index**
 
-- `warehouses`
-- `suppliers`
-- `purchase_orders`
-- `purchase_order_items`
-- `inventory_transactions`
-- `inventory_snapshots`
+Each KPI is accompanied by its change relative to the previous equivalent period, making it possible to quickly distinguish between current performance and performance direction.
 
-### Date Dimension
+---
 
-- `date_dimension`
+## Dynamic Financial and Operational Trends
 
-The operational model stores transaction-level facts. Analytical metrics such as margin, growth, store health, rankings, and inventory performance are calculated downstream rather than being hardcoded into the generated dataset.
+Two large trend visuals provide the main analytical area of the dashboard.
 
-## Data Validation
+Rather than dedicating individual charts to every possible measure, the report uses **dynamic metric selectors** that allow users to change what each visual displays.
 
-The generated dataset includes automated validation checks before it is used for analytics.
+Financial metrics include measures such as:
 
-Validated relationships include:
+- Revenue
+- Gross Profit
+- Margin %
+- Average Order Value
 
-- Order subtotal, discounts, tax, and total reconciliation
-- Order-item totals against order headers
-- Payment totals against order status
-- Sales transactions against inventory movements
-- Returned quantities not exceeding sold quantities
-- Refund totals against completed refund payments
-- Employee sales occurring within recorded shifts
-- Non-negative inventory snapshots
-- Reserved inventory not exceeding inventory on hand
-- Primary identifier uniqueness
-- Final inventory snapshots reconciling to cumulative signed inventory transactions
+Operational metrics include measures such as:
 
-The supplied validation report passed these checks for the generated dataset.
+- Return Rate
+- Protection Plan performance
+- Store Health
 
-## Data Loading
+Each trend compares the **selected store** against the **company average**, helping distinguish store-specific movements from broader company trends.
 
-The generated data is loaded into PostgreSQL using a Python loader and PostgreSQL `COPY` rather than thousands of individual `INSERT` statements.
+The dashboard can also change its time granularity, allowing the same report page to support both longer-term monthly analysis and more detailed daily investigation.
 
-The loader:
+## Daily Store View
 
-- Reads database configuration from environment variables
-- Connects using `psycopg`
-- Loads tables in dependency order
-- Uses CSV headers to map columns explicitly
-- Supports a dry-run mode
-- Reports loading progress
-- Runs transactionally
-- Rolls back the load if a table fails
-- Supports clean reloads
+![Store Overview - Kelowna - Daily View](./Screenshot%202026-08-23%20230914.png)
 
-Example:
+This allows the Store Overview to move between high-level performance review and shorter-term operational investigation without requiring separate dashboards.
 
-```bash
-python database/load_data.py --dry-run
-python database/load_data.py
-```
+---
 
-Database credentials are stored locally in `.env` and are intentionally excluded from version control.
+## Revenue by Category
 
-## Analytics Layer
+Revenue is broken down by major appliance category to show the composition of the selected store's sales.
 
-Power BI does not need to reproduce all operational joins from scratch.
+This makes it easy to identify:
 
-Reusable reporting logic is moved into PostgreSQL analytical views where appropriate. The current repository includes `database/analytics/store_daily_performance.sql`, which centralizes store/day reporting logic used by Power BI. This keeps row-level transformations centralized and makes the reporting model easier to understand.
+- Leading revenue categories
+- Categories contributing relatively little revenue
+- Differences in product mix between stores
+- Areas that may warrant further analysis
 
-The general split is:
+The reporting layer also supports more detailed category and subcategory analysis where required.
 
-### PostgreSQL / SQL
+---
 
-Used for:
+## Overstock Risk
 
-- Joining normalized operational tables
-- Reusable business rules
-- Daily/store-level analytical datasets
-- Revenue and cost components
-- Store-level reporting inputs
-- Reusable analytical views
+The dashboard includes an **Overstock Risk** table intended to surface inventory requiring management attention.
 
-### Power BI / DAX
+Rather than showing inventory levels alone, the analysis combines current inventory with recent sales activity and inventory value.
 
-Used for:
+The table includes:
 
-- Filter-context-aware measures
-- Previous-period comparisons
-- Rolling calculations
-- Store health measures
-- Rankings
-- Dynamic metric selection
-- Interactive driver analysis
+- SKU
+- Category
+- Current inventory
+- Recent units sold
+- Days on hand
+- Overstock value
+- Risk level
 
-## Key Analytics
+This adds an operational decision-making component to the report and helps identify inventory that may be tying up capital without generating sufficient sales.
 
-### Store Health
+---
 
-The dashboard uses a custom **Store Health Index** to summarize store performance across several dimensions rather than relying on a single financial metric.
+## Salesperson Performance
 
-The index is calculated as:
+The final section ranks employees within the selected store.
 
-```DAX
-Store Health Index =
-    0.30 * [Profitability Score]
-    + 0.25 * [Growth Score]
-    + 0.20 * [Labour Efficiency Score]
-    + 0.15 * [Return Performance Score]
-    + 0.10 * [Protection Plan Score]
-```
+The ranking metric can be changed, allowing managers to evaluate salesperson performance using measures such as revenue or margin rather than relying on a single definition of performance.
 
-The weighting gives the greatest importance to profitability and growth, while still incorporating labour efficiency, return performance, and protection-plan performance.
+This connects store-level results back to the employees contributing to them and provides another level of investigation below the overall store KPIs.
+
+---
+
+# Store Health Index
+
+A custom **Store Health Index** summarizes several dimensions of store performance into a single score.
 
 | Component | Weight |
 | --- | ---: |
-| Profitability Score | 30% |
-| Growth Score | 25% |
-| Labour Efficiency Score | 20% |
-| Return Performance Score | 15% |
-| Protection Plan Score | 10% |
+| Profitability | 30% |
+| Growth | 25% |
+| Labour Efficiency | 20% |
+| Return Performance | 15% |
+| Protection Plan Performance | 10% |
 
-For trend reporting, the dashboard uses a **30-day rolling Store Health measure** to reduce the effect of isolated unusually strong or weak days and make the underlying direction easier to interpret.
+The index is intended as a quick indicator of overall performance rather than a replacement for the underlying measures.
 
-The executive view compares store health against:
+A manager can identify an unusual Store Health score at the top of the dashboard and then use the financial and operational visuals below it to investigate the underlying causes.
 
-- Historical performance
-- The company-wide average
-- A target / healthy threshold
+---
 
-This makes the metric useful both as a snapshot KPI and as a longer-term store performance indicator.
+# Executive Overview
 
-### Store Ranking
+The project also includes a company-level **Executive Overview**.
 
-Stores can be compared using business measures such as:
+An initial version of this dashboard was completed earlier in development. It is currently being redesigned so that it more closely matches the structure, visual language, and interactive approach established in the Store Overview.
 
-- Revenue
-- Gross profit
-- Number of sales
-- Average sale value
-- Store health
+The updated Executive Overview will focus on questions such as:
 
-This allows the executive view to move beyond a single fixed ranking.
+- How is the company performing overall?
+- Which stores are outperforming or underperforming?
+- Which stores require attention?
+- How is company performance changing over time?
+- What are the major drivers behind those movements?
 
-### Growth vs. Margin
-
-The store scatterplot compares revenue growth with margin to identify different performance profiles.
-
-For example:
-
-- High growth / high margin
-- High growth / low margin
-- Low growth / high margin
-- Low growth / low margin
-
-This helps distinguish stores that are growing profitably from stores where growth or profitability may require attention.
-
-### Gross Profit Change Drivers
-
-The driver visual explains **why gross profit changed relative to the previous quarter**.
-
-The decomposition includes:
-
-- Regular-price sales value
-- Discounts
-- Returns / refunds
-- Product cost
-- Recovered product cost
-
-Cost-like components are shown based on their **impact on profit**, not simply their raw accounting sign. For example, lower product costs create a positive profit impact.
-
-The individual driver contributions are reconciled to:
+The intended reporting workflow is:
 
 ```text
-Current Period Gross Profit - Previous Period Gross Profit
+Executive Overview
+        ↓
+Identify Store
+        ↓
+Store Overview
+        ↓
+Financial / Operational Investigation
+        ↓
+Category / Inventory / Salesperson Drivers
 ```
 
-This provides a direct bridge between the headline profit KPI and the underlying operational movements.
+Once the redesigned Executive Overview is complete, screenshots of both pages will be presented together as the primary showcase of the project.
 
-## Planned Store Detail Page
+---
 
-The next planned Power BI page will allow a selected location to be analyzed in greater detail.
+# Project Architecture
 
-### KPIs
-
-- Revenue
-- Gross profit
-- Margin
-- Average order value
-
-### Store Performance
-
-- Store health trend
-- Profit over time
-- Profit breakdown by appliance/category
-
-### Inventory
-
-- Overstocked products / categories
-- Inventory requiring attention
-
-### Sales Team
-
-- Top-performing salespeople for the selected store
-
-The goal is to allow users to move from the company-wide executive view into the operational reasons behind a specific store's performance.
-
-## Future Development
-
-Potential later extensions include:
-
-- Deeper salesperson performance analysis
-- Inventory and purchasing dashboard
-- Supplier performance
-- Slow-moving and stockout analysis
-- Store/category drill-through
-- Additional report navigation and drill-through
-- Automated report refresh
-- Forecasting or anomaly detection
-
-## Repository Structure
+The project follows a complete analytics workflow:
 
 ```text
-appliance-retail/
-|
-|-- README.md
-|-- environment.yml
-|-- .gitignore
-|-- Appliance-analysis-exe-overview.pbix
-|-- exec-screenshot.png
-|-- generate_appliance_retail_dataset.py
-|-- dataset_manifest.json
-|-- validation_report.txt
-|
-`-- database/
-    |-- create_tables.sql
-    |-- load_data.sql
-    |-- load_data.py
-    |-- test_connection.py
-    `-- analytics/
-        `-- store_daily_performance.sql
+Python Data Generation
+        |
+        v
+PostgreSQL Operational Database
+        |
+        v
+SQL Analytics Layer
+        |
+        v
+Power BI Data Model
+        |
+        v
+DAX Measures & Business Logic
+        |
+        v
+Executive + Store Reporting
 ```
 
-### Key Files
+Operational transformations and reusable reporting logic are handled primarily in PostgreSQL, while Power BI and DAX handle interactive calculations that depend on filters, date ranges, stores, and user-selected metrics.
 
-- `Appliance-analysis-exe-overview.pbix` — Power BI report containing the current Executive Performance Overview.
-- `exec-screenshot.png` — screenshot of the current dashboard for quick viewing on GitHub.
-- `generate_appliance_retail_dataset.py` — reproducible synthetic retail data generator.
-- `dataset_manifest.json` — generated dataset metadata and row counts.
-- `validation_report.txt` — output from the dataset validation process.
-- `database/create_tables.sql` — PostgreSQL operational schema.
-- `database/load_data.py` — Python PostgreSQL bulk loader.
-- `database/load_data.sql` — SQL-based loading support.
-- `database/test_connection.py` — database connectivity test.
-- `database/analytics/store_daily_performance.sql` — analytical SQL view used as a major Power BI reporting source.
+---
 
-Generated CSV files are intentionally excluded from Git because they are large and can be recreated from the fixed random seed.
+# Technology Stack
 
-## Running the Project
+| Area | Technology |
+| --- | --- |
+| Data Generation | Python, NumPy |
+| Database | PostgreSQL |
+| Cloud Hosting | Azure Database for PostgreSQL |
+| SQL Development | JetBrains DataGrip |
+| Analytics | SQL, DAX |
+| Visualization | Microsoft Power BI |
+| Environment Management | Miniconda |
+| Version Control | Git / GitHub |
 
-### 1. Create the Python environment
+---
+
+# Data and Backend
+
+The project uses a reproducible synthetic retail dataset covering multiple stores, employees, customers, products, orders, returns, inventory movements, promotions, and other operational activity.
+
+The data was designed to create meaningful differences across stores, products, employees, and time periods so that the dashboards support realistic analytical comparisons.
+
+The dataset is loaded into a normalized PostgreSQL database hosted on **Azure Database for PostgreSQL**.
+
+SQL analytical views consolidate operational data into reporting-friendly datasets before it is consumed by Power BI.
+
+This keeps the Power BI model focused on analytics and visualization rather than recreating complex operational joins inside the report.
+
+---
+
+# Analytics Layer
+
+The reporting solution splits responsibilities between SQL and Power BI.
+
+### PostgreSQL / SQL
+
+Used primarily for:
+
+- Joining normalized operational tables
+- Creating reusable reporting datasets
+- Aggregating store and daily performance
+- Preparing sales, inventory, employee, and category analysis
+- Centralizing reusable business logic
+
+### Power BI / DAX
+
+Used primarily for:
+
+- Interactive KPI calculations
+- Previous-period comparisons
+- Dynamic metric selection
+- Time-based analysis
+- Store-versus-company comparisons
+- Store Health calculations
+- Ranking and conditional formatting
+- User-controlled report interactions
+
+This approach keeps reusable transformations close to the data while allowing Power BI to handle calculations that depend on the user's current report context.
+
+---
+
+# Development Process
+
+The project evolved from the data layer upward.
+
+### 1. Operational Data Model
+
+A relational PostgreSQL model was created for the major areas of an appliance retail business, including sales, products, stores, employees, customers, inventory, returns, promotions, and purchasing.
+
+### 2. Synthetic Data Generation
+
+Python was used to create a multi-year dataset large enough to support store, employee, category, inventory, and time-based analysis.
+
+### 3. Cloud Database
+
+The generated dataset was loaded into an Azure-hosted PostgreSQL database to create a realistic separation between the reporting environment and the source data.
+
+### 4. SQL Analytics
+
+Reporting-oriented SQL views were created to transform the operational model into datasets better suited for analytical queries and Power BI.
+
+### 5. Power BI Model and DAX
+
+The analytical datasets were brought into Power BI and extended with DAX measures for KPIs, previous-period comparisons, dynamic trend metrics, rankings, store health, and other interactive calculations.
+
+### 6. Dashboard Development
+
+The first report page focused on company-wide executive reporting.
+
+Development then moved to the Store Overview, which expanded the project into more detailed financial and operational analysis at the individual-store level.
+
+The Store Overview is now the strongest representation of the intended final design, and the Executive Overview is being rebuilt to follow the same approach.
+
+---
+
+# Repository
+
+Important project files include:
+
+```text
+appliance-analysis/
+│
+├── README.md
+├── Appliance-analysis-exe-overview.pbix
+├── Screenshot 2026-08-23 230722.png
+├── Screenshot 2026-08-23 230914.png
+├── generate_appliance_retail_dataset.py
+├── dataset_manifest.json
+├── validation_report.txt
+├── environment.yml
+│
+└── database/
+    ├── create_tables.sql
+    ├── load_data.py
+    ├── load_data.sql
+    ├── test_connection.py
+    │
+    └── analytics/
+        └── store_daily_performance.sql
+```
+
+Generated raw datasets and database credentials are intentionally excluded from the repository.
+
+---
+
+# Running the Project
+
+## 1. Create the environment
 
 ```bash
 conda env create -f environment.yml
 conda activate appliance-retail
 ```
 
-### 2. Configure PostgreSQL credentials
+## 2. Configure PostgreSQL
 
-Create a local `.env` file:
+Create a local `.env` file containing the PostgreSQL connection information.
 
-```env
+```text
 POSTGRES_HOST=<your-server>.postgres.database.azure.com
 POSTGRES_PORT=5432
 POSTGRES_DB=appliance_retail
@@ -442,94 +346,68 @@ POSTGRES_PASSWORD=<your-password>
 POSTGRES_SSLMODE=require
 ```
 
-Do **not** commit `.env`.
+The `.env` file is excluded from version control.
 
-### 3. Generate the synthetic dataset
+## 3. Generate the dataset
 
 ```bash
 python generate_appliance_retail_dataset.py --output appliance_retail_dataset
 ```
 
-### 4. Create the PostgreSQL schema
+## 4. Create and load the database
 
-```bash
-psql -d appliance_retail -f database/create_tables.sql
-```
+Create the PostgreSQL schema and load the generated data using the scripts in the `database/` directory.
 
-### 5. Load the generated data
+## 5. Create the analytics layer
 
-```bash
-python database/load_data.py --dry-run
-python database/load_data.py
-```
-
-### 6. Create the analytics layer
-
-Run the analytical view definition:
-
-```bash
-psql -d appliance_retail -f database/analytics/store_daily_performance.sql
-```
-
-The `store_daily_performance` view consolidates reusable store/day reporting logic for Power BI, while filter-context-dependent calculations remain in DAX.
-
-### 7. Open Power BI
-
-Open:
+Run the analytical SQL definitions in:
 
 ```text
-Appliance-analysis-exe-overview.pbix
+database/analytics/
 ```
 
-Configure the PostgreSQL data source if necessary, then refresh the model.
+## 6. Open Power BI
 
-## Security / Repository Notes
-
-The repository should contain source code, SQL definitions, validation output, documentation, and the Power BI report.
-
-It should **not** contain:
-
-- `.env`
-- Database passwords
-- Azure credentials
-- Generated raw CSV files
-- Local virtual environments
-- IDE cache files
-
-A suitable `.gitignore` should include:
-
-```gitignore
-.env
-.env.*
-
-data/raw/*.csv
-data/raw/*.zip
-
-__pycache__/
-*.pyc
-
-.venv/
-venv/
-
-.idea/
-.vscode/
-
-.DS_Store
-Thumbs.db
-```
-
-## Why I Built This
-
-This project was designed to practice the full analytics lifecycle: creating and validating realistic source data, designing a relational model, loading it into a cloud database, building reusable SQL analytics, and turning those results into business-facing Power BI dashboards.
-
-The emphasis is on connecting technical implementation to practical questions such as:
-
-- Which stores are performing well?
-- Which stores are deteriorating?
-- Is revenue growth profitable?
-- What is driving changes in gross profit?
-- Where should management investigate next?
+Open the `.pbix` report, configure the PostgreSQL connection if required, and refresh the model.
 
 ---
 
-**Status:** Executive Performance Overview complete. Store Detail page planned next.
+# Next Steps
+
+The immediate next step is to **redesign the Executive Overview** so that it visually and analytically complements the Store Overview.
+
+Once that is complete, the report will provide a two-level workflow:
+
+```text
+Company Performance
+        ↓
+Identify Store
+        ↓
+Store Performance
+        ↓
+Financial / Operational Investigation
+        ↓
+Inventory / Category / Salesperson Drivers
+```
+
+Potential later extensions include:
+
+- Dedicated salesperson analysis
+- Deeper inventory and purchasing reporting
+- Supplier performance
+- Stockout and slow-moving inventory analysis
+- Additional drill-through between report pages
+- Automated refresh
+- Forecasting or anomaly detection
+
+---
+
+# Project Goal
+
+The goal of this project is to demonstrate more than the ability to build individual Power BI charts.
+
+It is intended to show the complete process of turning operational data into a structured analytics solution:
+
+**data generation → database design → SQL analytics → business logic → interactive reporting**
+
+The final report is being designed around a natural management workflow: begin with company-level performance, identify locations requiring attention, and then investigate the financial and operational factors affecting those stores.
